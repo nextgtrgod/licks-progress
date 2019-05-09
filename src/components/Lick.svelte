@@ -1,19 +1,41 @@
-<li>
-    <p>{ lick.name }</p>
-    <div data-goal="{ lick.goal }">
-        <span style="width: {100 * lick.current / lick.goal}%"></span>
-        <h2>{ (100 * lick.current / lick.goal) ^ 0}%</h2>
-        <h3 style="left: {100 * lick.current / lick.goal}%">
-            {100 * lick.current / lick.goal !== 100 ? lick.current : ''}
+
+<li class:edited>
+    <div class="bar" data-goal="{ goal }">
+
+        <span style="width: {percent}%; opacity: {percent / 100};"/>
+
+        <h3 style="left: { percent }%">
+            { !completed ? current : '' }
         </h3>
     </div>
+
+	<div class="edit">
+		<input bind:value={ name } placeholder="lick name"/>
+		<h2>{ percent ^ 0}%</h2>
+	</div>
 </li>
 
 
 <script>
 
-    export let lick
+	export let name
+	export let current
+	export let goal
 
+	let init = {
+		name,
+		goal,
+		current,
+	}
+
+	let edited = false
+
+	let percent = 100 * current / goal
+	let completed = percent === 100
+
+	$: {
+		edited = (name !== init.name) || (goal !== init.goal) || (current !== init.current)
+	}
 
 </script>
 
@@ -23,31 +45,18 @@
 	li {
 		flex-shrink: 0;
 		position: relative;
-		display: flex;
-		align-items: center;
 		width: 100%;
 		list-style: none;
-		margin-bottom: 40px;
+		margin-bottom: 60px;
+		transition: all .2s;
+	}
+
+	li.edited {
+		background-color: #007b97;
 	}
 
 	li:last-child {
 		margin-bottom: 0;
-	}
-
-	li:before {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: -15px;
-		bottom: 0;
-		margin: auto;
-		width: 0;
-		height: 0;
-		border-style: solid;
-		border-width: 5px 0 5px 10px;
-		border-color: transparent transparent transparent var(--text-color);
-		opacity: 0;
-		transition: opacity .2s;
 	}
 
 	li.selected div {
@@ -58,65 +67,83 @@
 		border-right: 1px dashed;
 	}
 
-		p {
-			flex-shrink: 0;
-			flex-basis: 25%;
-			padding-right: 10px;
-			margin: 0;
-			font-size: .95em;
-			font-weight: 700;
-			box-sizing: border-box;
-			cursor: pointer;
-		}
+	.edit {
+		width: 100%;
+		display: flex;
+		align-items: flex-end;
+	}
 
-		div {
-			position: relative;
-			flex-basis: 80%;
-			height: 25px;
-			border: 1px solid;
-		}
+	input {
+		flex-basis: 100%;
+		margin: 0;
+		padding: 0;
+		font-size: 1em;
+		font-weight: 700;
+		line-height: 1;
+		color: inherit;
+		background-color: transparent;
+		border-radius: 0;
+		border: none;
+		border-bottom: 1px dashed transparent;
+		transition: .2s;
+		outline: none;
+		box-sizing: border-box;
+	}
 
-		div:after {
-			position: absolute;
-			content: attr(data-goal);
-			right: 0;
-			bottom: 35px;
-			font-size: .75em;
-			line-height: 1;
-		}
+	input:focus {
+		border-bottom: 1px dashed;
+	}
 
-			span {
-				position: absolute;
-				top: 0;
-				left: 0;
-				bottom: 0;
-				display: block;
-				height: 100%;
-				width: 0;
-				background-color: var(--bar-color);
-				border-right: 1px solid;
-				transition: width .2s;
-			}
+	h2 {
+		position: relative;
+		margin: 0;
+		margin-left: auto;
+		padding-left: 20px;
+		font-size: 1em;
+		font-weight: 700;
+		line-height: 1;
+		text-align: center;
+		pointer-events: none;
+		user-select: none;
+	}
 
-			h2 {
-				position: relative;
-				margin: 0;
-				font-size: .95em;
-				font-weight: 500;
-				line-height: 25px;
-				text-align: center;
-				pointer-events: none;
-				user-select: none;
-			}
+	.bar {
+		position: relative;
+		height: 25px;
+		margin-bottom: 10px;
+		border: 1px solid;
+	}
 
-			h3 {
-				position: absolute;
-				bottom: 35px;
-				left: 0;
-				margin: 0;
-				font-size: .75em;
-				line-height: 1;
-				transform: translateX(-50%);
-            }
+	.bar:after {
+		position: absolute;
+		content: attr(data-goal);
+		right: 0;
+		bottom: 35px;
+		font-size: .75em;
+		line-height: 1;
+	}
+
+	span {
+		position: absolute;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		display: block;
+		height: 100%;
+		width: 0;
+		background-color: var(--bar-color);
+		border-right: 1px solid;
+		transition: width .2s;
+	}
+
+	h3 {
+		position: absolute;
+		bottom: 35px;
+		left: 0;
+		margin: 0;
+		font-size: .75em;
+		line-height: 1;
+		transform: translateX(-50%);
+	}
 
 </style>

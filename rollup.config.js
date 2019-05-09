@@ -22,7 +22,21 @@ export default {
 			// a separate file — better for performance
 			css: css => {
 				css.write('public/bundle.css');
-			}
+			},
+
+			// preprocess: {
+			// 	style: ({ content, attributes }) => {
+
+			// 		if (attributes.type !== 'postcss') return
+
+			// 		return new Promise((resolve, reject) => {
+
+			// 			console.log(attributes)
+
+			// 			resolve()
+			// 		})
+			// 	}
+			// },
 		}),
 
 		// If you have external dependencies installed from

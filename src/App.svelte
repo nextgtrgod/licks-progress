@@ -1,49 +1,91 @@
-<main>
-	{#each data as list, i}
-		<ul>
-			{#each list as lick}
-				<Lick lick="{ lick }"/>
-			{/each}
-		</ul>
-	{/each}
+<main class:loaded>
+	<ul>
+		{#each data as lick, i (i)}
+			<Lick {...lick}/>
+		{/each}
+	</ul>
 </main>
 
 
 <script>
-	import data from '../data'
+	import { API } from './config'
 	import Lick from './components/Lick.svelte'
+
+	import { onMount, beforeUpdate, afterUpdate } from 'svelte'
+
+	let data = []
+	let loaded = false
+
+	onMount(async () => {
+
+		try {
+			let res = await fetch(`${API}/api`, {
+				method: 'GET',
+				cache: 'no-cache',
+			})
+	
+			data = (await res.json()).data
+
+		} catch (error) {
+			console.log(error)
+		}
+
+		loaded = true
+
+		// console.log('-> mounted')
+	})
+
+	// beforeUpdate(() => {
+		
+	// 	console.log('-> before update')
+	// })
+
+	// afterUpdate(() => {
+		
+	// 	console.log('-> after update')
+	// })
 
 </script>
 
 
-<style>
+<style type="postcss">
 
 	:root {
 		height: 100%;
 		overflow: hidden;
 
-		--bg-color: #0FF;
-		--bar-color: #F7FF00;
+		--bg-color:	#1D222C;
+		--text-color: #FFF;
+		--bar-color: #6c3fb5;
 	}
 
 	:global(body) {
 		position: relative;
 		margin: 0;
 		padding: 0;
+
 		font-family: 'Jura', sans-serif;
 		font-weight: 400;
 		font-size: 18px;
+
 		color: var(--text-color);
 		background-color: var(--bg-color);
-		opacity: 0;
-		animation: fade-in .4s forwards;
-		overflow: hidden;
+		overflow: auto;
 	}
 
-	:global(ul) {
-		margin: 0;
-		padding: 0;
-		list-style: none;
+	::selection {
+		background: var(--bar-color);
+	}
+
+	main {
+		margin: 40px auto;
+		padding: 0 20px;
+		box-sizing: border-box;
+		opacity: 0;
+	}
+
+	main.loaded {
+		animation: fade-in .4s forwards;
 	}
 
 	@keyframes fade-in {
@@ -52,51 +94,11 @@
 		}
 	}
 
-	::selection {
-		background: var(--bar-color);
-	}
-
-	main {
-		position: relative;
-		display: flex;
-		align-items: center;
-		scroll-snap-type: x mandatory;
-		max-height: 100vh;
-		overflow: auto;
-		z-index: 1;
-	}
-
 	ul {
-		flex-shrink: 0;
-		position: relative;
-		width: 610px;
-		height: 100vh;
-		min-height: 100vh;
-		scroll-snap-align: start;
-		scroll-snap-stop: always;
-		margin: auto;
-		padding: 80px 30px;
-		padding-left: 20px;
-		display: flex;
-		justify-content: center;
-		flex-direction: column;
-		box-sizing: border-box;
-		border-right: 1px dashed #111;
-	}
-
-	ul:last-of-type {
-		border: none;
-	}
-
-	:global(body:after) {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: 0;
-		bottom: 0;
-		width: 100%;
-		background: linear-gradient(to right, rgba(247, 255, 0, 1), rgba(247, 255, 0, 0));
-		mix-blend-mode: exclusion;
+		width: 400px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
 	}
 
 </style>
