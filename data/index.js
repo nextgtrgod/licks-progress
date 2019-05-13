@@ -1,6 +1,7 @@
 
 export default [
     {
+        id: 1,
         name: 'Tempting time',
         goal: 170,
         current: 140,

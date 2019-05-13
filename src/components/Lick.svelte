@@ -1,40 +1,43 @@
 
 <li class:edited>
-    <div class="bar" data-goal="{ goal }">
+    <div class="bar" data-goal={ data.goal }>
 
-        <span style="width: {percent}%; opacity: {percent / 100};"/>
+        <span style="width: { percent }%; opacity: { percent / 100 };"/>
 
         <h3 style="left: { percent }%">
-            { !completed ? current : '' }
+            { !completed ? data.current : '' }
         </h3>
     </div>
 
 	<div class="edit">
-		<input bind:value={ name } placeholder="lick name"/>
+		<input bind:value={ data.name } placeholder="lick name"/>
 		<h2>{ percent ^ 0}%</h2>
 	</div>
 </li>
 
 
 <script>
+	import events from '../utils/events'
 
-	export let name
-	export let current
-	export let goal
+	import {
+		beforeUpdate,
+		afterUpdate,
+		// createEventDispatcher,
+	} from 'svelte'
 
-	let init = {
-		name,
-		goal,
-		current,
-	}
+	export let data
 
 	let edited = false
 
-	let percent = 100 * current / goal
+	let percent = 100 * data.current / data.goal
 	let completed = percent === 100
 
+	// let dispatch = createEventDispatcher()
+
 	$: {
-		edited = (name !== init.name) || (goal !== init.goal) || (current !== init.current)
+		// edited = (name !== init.name) || (goal !== init.goal) || (current !== init.current)
+		
+		// dispatch('change', { id, edited })
 	}
 
 </script>
@@ -46,25 +49,18 @@
 		flex-shrink: 0;
 		position: relative;
 		width: 100%;
+		margin-bottom: 40px;
+		padding-top: 20px;
 		list-style: none;
-		margin-bottom: 60px;
 		transition: all .2s;
 	}
 
 	li.edited {
-		background-color: #007b97;
+		/* background-color: #007b97; */
 	}
 
 	li:last-child {
 		margin-bottom: 0;
-	}
-
-	li.selected div {
-		border: 1px dashed;
-	}
-
-	li.selected div span {
-		border-right: 1px dashed;
 	}
 
 	.edit {

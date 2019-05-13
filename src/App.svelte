@@ -1,54 +1,90 @@
 <main class:loaded>
-	<ul>
-		{#each data as lick, i (i)}
-			<Lick {...lick}/>
-		{/each}
-	</ul>
+	{#if Object.keys(changes).length}
+		<button class="changes" on:click={ saveData }>
+			<img src="./images/save.svg" alt="">
+		</button>
+	{/if}
+
+	<List
+		bind:data={ data }
+		bind:changes={ changes }
+	/>
 </main>
 
 
 <script>
 	import { API } from './config'
-	import Lick from './components/Lick.svelte'
+	import List from './components/List.svelte'
 
-	import { onMount, beforeUpdate, afterUpdate } from 'svelte'
+	import { onMount, beforeUpdate, afterUpdate, onDestroy } from 'svelte'
 
 	let data = []
+	let beforeSave = []
+
 	let loaded = false
 
+	let changes = {}
+
 	onMount(async () => {
+
+		beforeSave = await getData()
+
+		loaded = true
+
+		console.log('-> App mounted')
+	})
+
+	let getData = async () => {
 
 		try {
 			let res = await fetch(`${API}/api`, {
 				method: 'GET',
 				cache: 'no-cache',
 			})
-	
+
 			data = (await res.json()).data
+			beforeSave = [...data]
 
 		} catch (error) {
 			console.log(error)
 		}
+	}
 
-		loaded = true
+	let saveData = async () => {
 
-		// console.log('-> mounted')
-	})
+		console.log(data)
+		return
 
-	// beforeUpdate(() => {
-		
-	// 	console.log('-> before update')
-	// })
+		try {
+			let res = await fetch(`${API}/api`, {
+				method: 'POST',
+				body: JSON.stringify(data),
+				headers: {
+					'Content-Type': 'application/json'
+				},
+			})
 
-	// afterUpdate(() => {
-		
-	// 	console.log('-> after update')
-	// })
+			data = (await res.json()).data
+
+			console.log(data)
+
+		} catch (error) {
+			console.log(error)
+		}
+	}
+
+	$: {
+		if (data.length) {
+
+			console.log(data[0].name)
+			if (beforeSave) console.log(beforeSave[0].name)
+		}
+	}
 
 </script>
 
 
-<style type="postcss">
+<style>
 
 	:root {
 		height: 100%;
@@ -94,11 +130,21 @@
 		}
 	}
 
-	ul {
-		width: 400px;
+	button.changes {
+		position: fixed;
+		bottom: 20px;
+		right: 20px;
 		margin: 0;
 		padding: 0;
-		list-style: none;
+		font-weight: 300;
+		background-color: transparent;
+		border: none;
+		cursor: pointer;
+		filter: drop-shadow(0px 0px 40px var(--bar-color));
+	}
+
+	button.changes img {
+		width: 50px;
 	}
 
 </style>

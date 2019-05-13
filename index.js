@@ -28,23 +28,7 @@ app.get('/api', async (req, res) => {
 
 app.post('/api', async (req, res) => {
 
-	let data = req.params.id === 'new'
-		? await controller.create(req.body)
-		: await controller.update(req.body)
-
-	res.send({ data })
-})
-
-app.post('/api', async (req, res) => {
-
-	let data = await controller.updateAll(req.body)
-
-	res.send({ data })
-})
-
-app.delete('/api/:id', async (req, res) => {
-
-	let data = await controller.delete(req.params.id)
+	let data = await controller.update(req.body)
 	res.send({ data })
 })
 

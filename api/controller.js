@@ -16,44 +16,24 @@ class Controller {
 	}
 
 	async update(data) {
-		let items = await readFile(this.path)
-
-		let index = items.findIndex(item => item.id === data.id)
-
-		items[index] = data
-
-		await writeFile(items, this.path)
-
-		return items
-	}
-
-	async updateAll(data) {
 
 		await writeFile(data, this.path)
+
+		console.log(data)
 
 		return data
 	}
 
-	async create(data) {
+	async patch() {
 		let items = await readFile(this.path)
 
-		let maxIndex = 0
+		items = items.map((item, i) => {
 
-		items.map(item => item.id > maxIndex && (maxIndex = item.id))
-
-		data.id = maxIndex + 1
-
-		items.push(data)
-
-		await writeFile(items, this.path)
-
-		return items
-	}
-
-	async delete(id) {
-		let items = await readFile(this.path)
-
-		items = items.filter(item => item.id !== +id)
+			return {
+				id: i + 1,
+				...item,
+			}
+		})
 
 		await writeFile(items, this.path)
 
