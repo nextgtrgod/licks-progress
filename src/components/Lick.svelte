@@ -1,44 +1,72 @@
 
-<li class:edited>
-    <div class="bar" data-goal={ data.goal }>
+<li>
+    <div
+		bind:this={ bar }
+		class="bar"
+		class:almost
+		class:completed
+		data-goal={ data.goal }
+	>
+        <span style="width: { percent }%;"/>
 
-        <span style="width: { percent }%; opacity: { percent / 100 };"/>
-
-        <h3 style="left: { percent }%">
-            { !completed ? data.current : '' }
-        </h3>
+        <h3 style="left: { percent }%;">{ currentView }</h3>
     </div>
 
 	<div class="edit">
-		<input bind:value={ data.name } placeholder="lick name"/>
-		<h2>{ percent ^ 0}%</h2>
+		<input
+			bind:this={ input }
+			bind:value={ data.name }
+			placeholder="lick name"
+		/>
+		<h2>{ percentView }%</h2>
 	</div>
 </li>
 
 
 <script>
-	import events from '../utils/events'
-
-	import {
-		beforeUpdate,
-		afterUpdate,
-		// createEventDispatcher,
-	} from 'svelte'
+	import interact from 'interact.js'
+	import { onMount, beforeUpdate, afterUpdate, onDestroy } from 'svelte'
+	import clamp from '../utils/clamp'
+	import map from '../utils/map'
 
 	export let data
 
-	let edited = false
+	$: percent = 100 * data.current / data.goal
+	$: almost = percent >= 90 && !completed
+	$: completed = percent === 100
 
-	let percent = 100 * data.current / data.goal
-	let completed = percent === 100
+	$: currentView = Math.round(data.current)
+	$: percentView = Math.round(percent)
 
-	// let dispatch = createEventDispatcher()
 
-	$: {
-		// edited = (name !== init.name) || (goal !== init.goal) || (current !== init.current)
-		
-		// dispatch('change', { id, edited })
-	}
+	let bar
+	let input
+	let offset = 0
+	let width = 0
+
+	onMount(() => {
+
+		width = bar.offsetWidth
+
+		interact(bar).draggable({
+			onstart: () => {
+
+				input.blur()
+			},
+			onmove: ({ dx, dy }) => {
+
+				data.current = clamp(
+					data.current + map(dx, 0, width, 0, data.goal),
+					0,
+					data.goal,
+				)
+			},
+			onend: () => {
+
+				data.current = Math.round(data.current)
+			}
+		})
+	})
 
 </script>
 
@@ -49,10 +77,21 @@
 		flex-shrink: 0;
 		position: relative;
 		width: 100%;
+		max-width: 400px;
+		margin: 0 20px;
 		margin-bottom: 40px;
 		padding-top: 20px;
 		list-style: none;
 		transition: all .2s;
+	}
+
+	.bar.almost:after {
+		transform: translateY(-120%);
+	}
+
+	.bar.almost h3,
+	.bar.completed h3 {
+		transform: translateX(-100%);
 	}
 
 	li.edited {
@@ -92,13 +131,14 @@
 
 	h2 {
 		position: relative;
+		width: 65px;
 		margin: 0;
 		margin-left: auto;
 		padding-left: 20px;
+		text-align: right;
 		font-size: 1em;
 		font-weight: 700;
 		line-height: 1;
-		text-align: center;
 		pointer-events: none;
 		user-select: none;
 	}
@@ -117,6 +157,7 @@
 		bottom: 35px;
 		font-size: .75em;
 		line-height: 1;
+		transition: transform .2s;
 	}
 
 	span {
@@ -129,7 +170,6 @@
 		width: 0;
 		background-color: var(--bar-color);
 		border-right: 1px solid;
-		transition: width .2s;
 	}
 
 	h3 {
@@ -140,6 +180,8 @@
 		font-size: .75em;
 		line-height: 1;
 		transform: translateX(-50%);
+		transition-property: opacity, transform;
+		transition-duration: .1s;
 	}
 
 </style>

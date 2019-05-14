@@ -1,6 +1,11 @@
 <main class:loaded>
-	{#if Object.keys(changes).length}
-		<button class="changes" on:click={ saveData }>
+	{#if changes}
+		<button
+			in:fade="{{ duration: 200 }}"
+			out:fly="{{ y: 50, duration: 200 }}"
+			class="changes"
+			on:click={ saveData }
+		>
 			<img src="./images/save.svg" alt="">
 		</button>
 	{/if}
@@ -17,17 +22,18 @@
 	import List from './components/List.svelte'
 
 	import { onMount, beforeUpdate, afterUpdate, onDestroy } from 'svelte'
+	import { fade, fly } from 'svelte/transition'
 
 	let data = []
-	let beforeSave = []
+	let beforeSave = ''
 
 	let loaded = false
 
-	let changes = {}
+	let changes = false
 
 	onMount(async () => {
 
-		beforeSave = await getData()
+		await getData()
 
 		loaded = true
 
@@ -43,7 +49,7 @@
 			})
 
 			data = (await res.json()).data
-			beforeSave = [...data]
+			beforeSave = JSON.stringify(data)
 
 		} catch (error) {
 			console.log(error)
@@ -51,9 +57,6 @@
 	}
 
 	let saveData = async () => {
-
-		console.log(data)
-		return
 
 		try {
 			let res = await fetch(`${API}/api`, {
@@ -65,8 +68,7 @@
 			})
 
 			data = (await res.json()).data
-
-			console.log(data)
+			beforeSave = JSON.stringify(data)
 
 		} catch (error) {
 			console.log(error)
@@ -76,8 +78,7 @@
 	$: {
 		if (data.length) {
 
-			console.log(data[0].name)
-			if (beforeSave) console.log(beforeSave[0].name)
+			changes = !(beforeSave === JSON.stringify(data))
 		}
 	}
 
@@ -141,6 +142,7 @@
 		border: none;
 		cursor: pointer;
 		filter: drop-shadow(0px 0px 40px var(--bar-color));
+		z-index: 1;
 	}
 
 	button.changes img {
