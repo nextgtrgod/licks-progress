@@ -20,6 +20,7 @@
     "start:dev": "sirv public --dev"
   },
   "dependencies": {
+    "@shopify/draggable": "^1.0.0-beta.8",
     "cors": "^2.8.5",
     "express": "^4.16.4",
     "interact.js": "^1.2.8"

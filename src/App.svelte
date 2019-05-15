@@ -1,4 +1,7 @@
 <main class:loaded>
+
+	<Filter bind:tags={ tags }/>
+
 	{#if changes}
 		<button
 			in:fade="{{ duration: 200 }}"
@@ -10,15 +13,13 @@
 		</button>
 	{/if}
 
-	<List
-		bind:data={ data }
-		bind:changes={ changes }
-	/>
+	<List bind:data={ data }/>
 </main>
 
 
 <script>
 	import { API } from './config'
+	import Filter from './components/Filter.svelte'
 	import List from './components/List.svelte'
 
 	import { onMount, beforeUpdate, afterUpdate, onDestroy } from 'svelte'
@@ -28,7 +29,6 @@
 	let beforeSave = ''
 
 	let loaded = false
-
 	let changes = false
 
 	onMount(async () => {
@@ -37,7 +37,7 @@
 
 		loaded = true
 
-		console.log('-> App mounted')
+		console.log('-> App mounted 🌚')
 	})
 
 	let getData = async () => {
@@ -81,6 +81,13 @@
 			changes = !(beforeSave === JSON.stringify(data))
 		}
 	}
+
+	$: tags = (() => {
+
+		let allTags = data.reduce((acc, el) => [...acc, ...(el.tags || [])], [])
+
+		return [ ...new Set(['all', ...allTags]) ]
+	})()
 
 </script>
 

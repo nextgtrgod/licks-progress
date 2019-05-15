@@ -1,4 +1,3 @@
-
 <li>
     <div
 		bind:this={ bar }
@@ -25,28 +24,46 @@
 
 <script>
 	import interact from 'interact.js'
+	// import Draggable from '@shopify/draggable'
+
 	import { onMount, beforeUpdate, afterUpdate, onDestroy } from 'svelte'
+
 	import clamp from '../utils/clamp'
 	import map from '../utils/map'
 
 	export let data
+	export let shift
 
-	$: percent = 100 * data.current / data.goal
+	let innerCurrent = data.current // debounce
+
+	$: percent = 100 * innerCurrent / data.goal
 	$: almost = percent >= 90 && !completed
 	$: completed = percent === 100
 
-	$: currentView = Math.round(data.current)
+	$: currentView = Math.round(innerCurrent)
 	$: percentView = Math.round(percent)
 
-
+	// let root
 	let bar
 	let input
 	let offset = 0
 	let width = 0
 
+	let draggable
+
 	onMount(() => {
 
 		width = bar.offsetWidth
+
+		// draggable = new Draggable.Draggable(root, {
+		// 	draggable: bar.className,
+		// })
+
+		// console.log(draggable)
+
+		// draggable.on('drag:start', () => console.log('drag:start'))
+		// draggable.on('drag:move', () => console.log('drag:move'))
+		// draggable.on('drag:stop', () => console.log('drag:stop'))
 
 		interact(bar).draggable({
 			onstart: () => {
@@ -55,17 +72,23 @@
 			},
 			onmove: ({ dx, dy }) => {
 
-				data.current = clamp(
-					data.current + map(dx, 0, width, 0, data.goal),
+				innerCurrent = clamp(
+					innerCurrent + map(dx / (1 + shift), 0, width, 0, data.goal),
 					0,
 					data.goal,
 				)
 			},
 			onend: () => {
 
-				data.current = Math.round(data.current)
+				data.current = Math.round(innerCurrent)
 			}
 		})
+	})
+
+	onDestroy(() => {
+
+		// draggable.destroy()
+		interact(bar).unset()
 	})
 
 </script>
@@ -92,14 +115,6 @@
 	.bar.almost h3,
 	.bar.completed h3 {
 		transform: translateX(-100%);
-	}
-
-	li.edited {
-		/* background-color: #007b97; */
-	}
-
-	li:last-child {
-		margin-bottom: 0;
 	}
 
 	.edit {
