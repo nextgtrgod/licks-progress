@@ -55,11 +55,11 @@
 <style>
 
 	ul {
-        width: 100%;
+        /* width: 100%; */
         display: flex;
         flex-wrap: wrap;
         align-items: center;
-		margin: 0;
+		margin: 0 -20px;
 		padding: 0;
 		list-style: none;
 	}

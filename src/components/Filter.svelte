@@ -8,15 +8,16 @@
 		{/each}
 	</select>
 
-	<label>
-		<input type=checkbox bind:checked={ $store.showCompleted }>
-		show completed
-	</label>
+	<Checkbox
+		bind:checked={ $store.showCompleted }
+		text={ 'completed' }
+	/>
 </div>
 
 
 <script>
 	import { store } from '../store'
+	import Checkbox from './Checkbox.svelte'
 
 	export let tags = []
 
@@ -26,18 +27,16 @@
 <style>
 
 	.filter {
+		max-width: 100%;
 		display: flex;
+		flex-wrap: wrap;
 		align-items: center;
-		margin-bottom: 20px;
-	}
-
-	.filter > * {
-		margin-left: 20px;
 	}
 
 	select {
 		width: 200px;
 		margin: 0;
+		margin-right: 30px;
 		text-indent: 0;
 		height: 1.8em;
 		font-size: 1em;
@@ -45,18 +44,6 @@
 		background-color: transparent;
 		border: 1px solid #FFF;
 		outline-color: var(--bar-color);
-	}
-
-	label {
-		display: flex;
-		align-items: center;
-		padding-left: 10px;
-		line-height: 1;
-	}
-
-	input {
-		margin: 0;
-		margin-right: 5px;
 	}
 
 </style>

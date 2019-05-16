@@ -4,15 +4,17 @@
 		class="bar"
 		class:almost
 		class:completed
-		data-goal={ data.goal }
 	>
         <span style="width: { percent }%;"/>
 
         <h3 style="left: { percent }%;">{ currentView }</h3>
+
+		<input type="number" class="goal" bind:value={ data.goal }>
     </div>
 
 	<div class="edit">
 		<input
+			class="title"
 			bind:this={ input }
 			bind:value={ data.name }
 			placeholder="lick name"
@@ -36,7 +38,7 @@
 
 	let innerCurrent = data.current // debounce
 
-	$: percent = 100 * innerCurrent / data.goal
+	$: percent = clamp(100 * innerCurrent / (data.goal || 1), 1, 100)
 	$: almost = percent >= 90 && !completed
 	$: completed = percent === 100
 
@@ -108,13 +110,12 @@
 		transition: all .2s;
 	}
 
-	.bar.almost:after {
+	.bar.almost input.goal {
 		transform: translateY(-120%);
 	}
 
-	.bar.almost h3,
 	.bar.completed h3 {
-		transform: translateX(-100%);
+		opacity: 0;
 	}
 
 	.edit {
@@ -124,17 +125,15 @@
 	}
 
 	input {
-		flex-basis: 100%;
 		margin: 0;
 		padding: 0;
-		font-size: 1em;
-		font-weight: 700;
+		font-family: inherit;
 		line-height: 1;
 		color: inherit;
-		background-color: transparent;
-		border-radius: 0;
 		border: none;
+		border-radius: 0;
 		border-bottom: 1px dashed transparent;
+		background-color: transparent;
 		transition: .2s;
 		outline: none;
 		box-sizing: border-box;
@@ -142,6 +141,12 @@
 
 	input:focus {
 		border-bottom: 1px dashed;
+	}
+
+	input.title {
+		flex-basis: 100%;
+		font-size: 1em;
+		font-weight: 700;
 	}
 
 	h2 {
@@ -165,14 +170,25 @@
 		border: 1px solid;
 	}
 
-	.bar:after {
+	.bar span {
+		max-width: 100%;
+	}
+
+	input.goal {
 		position: absolute;
-		content: attr(data-goal);
+		width: 25px;
+		height: 1em;
 		right: 0;
 		bottom: 35px;
 		font-size: .75em;
-		line-height: 1;
-		transition: transform .2s;
+		text-align: right;
+		transition: all .2s;
+	}
+
+	input.goal::-webkit-inner-spin-button, 
+	input.goal::-webkit-outer-spin-button {
+		-webkit-appearance: none; 
+		margin: 0;
 	}
 
 	span {
@@ -194,7 +210,7 @@
 		margin: 0;
 		font-size: .75em;
 		line-height: 1;
-		transform: translateX(-50%);
+		transform: translateX(-100%);
 		transition-property: opacity, transform;
 		transition-duration: .1s;
 	}

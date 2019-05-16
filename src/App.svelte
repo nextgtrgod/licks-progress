@@ -1,17 +1,23 @@
 <main class:loaded>
 
-	<Filter bind:tags={ tags }/>
+	<div class="menu">
+		<Filter bind:tags={ tags }/>
 
-	{#if changes}
-		<button
-			in:fade="{{ duration: 200 }}"
-			out:fly="{{ y: 50, duration: 200 }}"
-			class="changes"
-			on:click={ saveData }
-		>
-			<img src="./images/save.svg" alt="">
+		<button class="add" on:click={ addData }>
+			<img src="./images/plus.svg" alt="">
 		</button>
-	{/if}
+
+		{#if changes}
+			<button
+				class="save"
+				in:fade="{{ duration: 200 }}"
+				out:fly="{{ y: -50, duration: 200 }}"
+				on:click={ saveData }
+			>
+				<img src="./images/save.svg" alt="">
+			</button>
+		{/if}
+	</div>
 
 	<List bind:data={ data }/>
 </main>
@@ -75,6 +81,11 @@
 		}
 	}
 
+	let addData = () => {
+
+		console.log('addition')
+	}
+
 	$: {
 		if (data.length) {
 
@@ -105,6 +116,7 @@
 
 	:global(body) {
 		position: relative;
+		height: 100%;
 		margin: 0;
 		padding: 0;
 
@@ -117,15 +129,37 @@
 		overflow: auto;
 	}
 
+	:global(button) {
+		margin: 0;
+		padding: 0;
+		font: inherit;
+		color: inherit;
+		background: transparent;
+		border: none;
+		outline: none;
+		cursor: pointer;
+	}
+
+	:global(img) {
+		pointer-events: none;
+	}
+
 	::selection {
 		background: var(--bar-color);
 	}
 
 	main {
-		margin: 40px auto;
+		margin: 30px auto;
 		padding: 0 20px;
 		box-sizing: border-box;
 		opacity: 0;
+	}
+
+	@media (min-width: 720px) {
+		main {
+			margin: 40px auto;
+			padding: 0 40px;
+		}
 	}
 
 	main.loaded {
@@ -138,22 +172,26 @@
 		}
 	}
 
-	button.changes {
-		position: fixed;
-		bottom: 20px;
-		right: 20px;
-		margin: 0;
-		padding: 0;
-		font-weight: 300;
-		background-color: transparent;
-		border: none;
-		cursor: pointer;
-		filter: drop-shadow(0px 0px 40px var(--bar-color));
-		z-index: 1;
+	.menu {
+		display: flex;
+		align-items: center;
+		margin-bottom: 30px;
 	}
 
-	button.changes img {
-		width: 50px;
+	button.save {
+		margin-left: 30px;
+	}
+
+	button.save img {
+		width: 30px;
+	}
+
+	button.add {
+		margin-left: 35px;
+	}
+
+	button.add img {
+		width: 32px;
 	}
 
 </style>
