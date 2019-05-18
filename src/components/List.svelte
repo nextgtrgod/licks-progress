@@ -4,6 +4,7 @@
 			<Lick
 				bind:data={ lick }
 				bind:shift={ shift }
+				on:remove={ remove }
 			/>
 		{/if}
     {/each}
@@ -29,12 +30,12 @@
 
 		document.addEventListener('keydown', shiftOn)
 		document.addEventListener('keyup', shiftOff)
-	})
 
-	onDestroy(() => {
+		return () => {
 
-		document.removeEventListener('keydown', shiftOn)
-		document.removeEventListener('keyup', shiftOff)
+			document.removeEventListener('keydown', shiftOn)
+			document.removeEventListener('keyup', shiftOff)
+		}
 	})
 
 	$: visible = lick => {
@@ -49,6 +50,11 @@
 		return false
 	}
 
+	let remove = ({ detail }) => {
+
+		data = data.filter(el => el.id !== detail.id)
+	}
+
 </script>
 
 
@@ -58,10 +64,8 @@
         /* width: 100%; */
         display: flex;
         flex-wrap: wrap;
-        align-items: center;
+        align-items: flex-start;
 		margin: 0 -20px;
-		padding: 0;
-		list-style: none;
 	}
 
 </style>

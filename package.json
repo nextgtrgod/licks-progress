@@ -23,6 +23,12 @@
     "@shopify/draggable": "^1.0.0-beta.8",
     "cors": "^2.8.5",
     "express": "^4.16.4",
-    "interact.js": "^1.2.8"
+    "interact.js": "^1.2.8",
+    "less": "^3.9.0",
+    "postcss-import": "^12.0.1",
+    "postcss-preset-env": "^6.6.0",
+    "sugarss": "^2.0.0",
+    "svelte-preprocess-less": "^0.4.0",
+    "svelte-preprocess-postcss": "^1.0.0"
   }
 }

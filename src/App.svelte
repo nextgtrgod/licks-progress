@@ -3,8 +3,12 @@
 	<div class="menu">
 		<Filter bind:tags={ tags }/>
 
-		<button class="add" on:click={ addData }>
-			<img src="./images/plus.svg" alt="">
+		<button class="add" on:click={ showModal }>
+			<svg xmlns="http://www.w3.org/2000/svg" width="32" viewBox="0 0 31.1 31.1">
+				<path class="fill" d="M15.5 31.1C7 31.1 0 24.1 0 15.5S7 0 15.5 0 31 7 31 15.5c.1 8.6-6.9 15.6-15.5 15.6zm0-29.3C7.9 1.8 1.8 7.9 1.8 15.5S8 29.3 15.6 29.3c7.6 0 13.8-6.2 13.8-13.8S23.1 1.8 15.5 1.8z"/>
+				<path class="fill" d="M21.7 16.4H9.4c-.5 0-.9-.4-.9-.9s.4-.9.9-.9h12.2c.5 0 .9.4.9.9s-.4.9-.8.9z"/>
+				<path class="fill" d="M15.5 22.5c-.5 0-.9-.4-.9-.9V9.4c0-.5.4-.9.9-.9s.9.4.9.9v12.2c0 .5-.4.9-.9.9z"/>
+			</svg>
 		</button>
 
 		{#if changes}
@@ -13,6 +17,7 @@
 				in:fade="{{ duration: 200 }}"
 				out:fly="{{ y: -50, duration: 200 }}"
 				on:click={ saveData }
+				disabled={ fetching }
 			>
 				<img src="./images/save.svg" alt="">
 			</button>
@@ -20,6 +25,8 @@
 	</div>
 
 	<List bind:data={ data }/>
+
+	<Modal on:submit={ addData }/>
 </main>
 
 
@@ -27,6 +34,7 @@
 	import { API } from './config'
 	import Filter from './components/Filter.svelte'
 	import List from './components/List.svelte'
+	import Modal, { toggle as toggleModal } from './components/Modal.svelte'
 
 	import { onMount, beforeUpdate, afterUpdate, onDestroy } from 'svelte'
 	import { fade, fly } from 'svelte/transition'
@@ -36,6 +44,7 @@
 
 	let loaded = false
 	let changes = false
+	let fetching = false
 
 	onMount(async () => {
 
@@ -47,6 +56,8 @@
 	})
 
 	let getData = async () => {
+
+		fetching = true
 
 		try {
 			let res = await fetch(`${API}/api`, {
@@ -60,9 +71,13 @@
 		} catch (error) {
 			console.log(error)
 		}
+
+		fetching = false
 	}
 
 	let saveData = async () => {
+
+		fetching = true
 
 		try {
 			let res = await fetch(`${API}/api`, {
@@ -79,17 +94,31 @@
 		} catch (error) {
 			console.log(error)
 		}
+
+		fetching = false
 	}
 
-	let addData = () => {
+	let showModal = () => {
 
+		// document.documentElement.style.setProperty('--bg-color', '#F7F8F3')
+		// document.documentElement.style.setProperty('--text-color', '#111')
+		// document.documentElement.style.setProperty('--bar-color', '#F7444E')
+
+		toggleModal()
 		console.log('addition')
+	}
+
+	let addData = ({ detail }) => {
+
+		let maxId = Math.max(...data.reduce((acc, el) => [...acc, el.id], []))
+
+		data = [...data, { ...detail, id: maxId + 1 }]
 	}
 
 	$: {
 		if (data.length) {
 
-			changes = !(beforeSave === JSON.stringify(data))
+			changes = beforeSave !== JSON.stringify(data)
 		}
 	}
 
@@ -125,8 +154,11 @@
 		font-size: 18px;
 
 		color: var(--text-color);
-		background-color: var(--bg-color);
+		background-color: var(--bg-color) !important;
 		overflow: auto;
+
+		-webkit-overflow-scrolling: touch;
+		overscroll-behavior-y: none;
 	}
 
 	:global(button) {
@@ -142,6 +174,35 @@
 
 	:global(img) {
 		pointer-events: none;
+	}
+
+	:global(svg path.fill) {
+		fill: var(--text-color);
+	}
+
+	:global(input) {
+		margin: 0;
+		padding: 0;
+		font-family: inherit;
+		font-size: inherit;
+		line-height: 1;
+		color: inherit;
+		border: none;
+		border-radius: 0;
+		background-color: transparent;
+		outline: none;
+		box-sizing: border-box;
+	}
+
+	:global(ul) {
+		padding: 0;
+		margin: 0;
+		list-style: none;
+	}
+
+	:global(.overlay) {
+		background-color: var(--bg-color);
+		opacity: .95;
 	}
 
 	::selection {
@@ -175,7 +236,19 @@
 	.menu {
 		display: flex;
 		align-items: center;
-		margin-bottom: 30px;
+		margin-bottom: 60px;
+	}
+
+	button {
+		transition: all .2s;
+	}
+
+	button:hover {
+		transform: scale(1.05);
+	}
+
+	button:disabled {
+		pointer-events: none;
 	}
 
 	button.save {
@@ -188,10 +261,6 @@
 
 	button.add {
 		margin-left: 35px;
-	}
-
-	button.add img {
-		width: 32px;
 	}
 
 </style>

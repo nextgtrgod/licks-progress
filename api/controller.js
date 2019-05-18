@@ -24,21 +24,21 @@ class Controller {
 		return data
 	}
 
-	async patch() {
-		let items = await readFile(this.path)
+	// async patch() {
+	// 	let items = await readFile(this.path)
 
-		items = items.map((item, i) => {
+	// 	items = items.map((item, i) => {
 
-			return {
-				id: i + 1,
-				...item,
-			}
-		})
+	// 		return {
+	// 			id: i + 1,
+	// 			...item,
+	// 		}
+	// 	})
 
-		await writeFile(items, this.path)
+	// 	await writeFile(items, this.path)
 
-		return items
-	}
+	// 	return items
+	// }
 }
 
 const controller = new Controller()
