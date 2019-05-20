@@ -29,6 +29,7 @@
 		name: '',
 		current: 60,
 		goal: 120,
+		tags: [],
 	}
 
 	toggle = () => {
@@ -56,7 +57,6 @@
 			id: Date.now(),
 			...data,
 			name: data.name.trim(),
-
 		})
 
 		toggle()
