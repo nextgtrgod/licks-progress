@@ -22,6 +22,8 @@
 				<img src="./images/save.svg" alt="">
 			</button>
 		{/if}
+
+		<Settings/>
 	</div>
 
 	<List bind:data={ data }/>
@@ -35,6 +37,7 @@
 	import Filter from './components/Filter.svelte'
 	import List from './components/List.svelte'
 	import Modal, { toggle as toggleModal } from './components/Modal.svelte'
+	import Settings from './components/Settings.svelte'
 
 	import { onMount, beforeUpdate, afterUpdate, onDestroy } from 'svelte'
 	import { fade, fly } from 'svelte/transition'
@@ -100,10 +103,6 @@
 
 	let showModal = () => {
 
-		// document.documentElement.style.setProperty('--bg-color', '#F7F8F3')
-		// document.documentElement.style.setProperty('--text-color', '#111')
-		// document.documentElement.style.setProperty('--bar-color', '#F7444E')
-
 		toggleModal()
 		console.log('addition')
 	}
@@ -155,6 +154,7 @@
 
 		color: var(--text-color);
 		background-color: var(--bg-color) !important;
+		transition: background-color .1s;
 		overflow: auto;
 
 		-webkit-overflow-scrolling: touch;

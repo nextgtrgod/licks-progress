@@ -124,7 +124,7 @@
 		margin-bottom: 40px;
 		padding-top: 20px;
 		list-style: none;
-		transition: all .2s;
+		/* transition: all .2s; */
 
 		&:hover,
 		&.selected {
@@ -177,7 +177,7 @@
 
 	input {
 		border-bottom: 1px dashed transparent;
-		transition: .2s;
+		transition: border .2s;
 
 		&:focus {
 			border-bottom: 1px dashed;
@@ -225,7 +225,7 @@
 		bottom: 34px;
 		font-size: 14px;
 		text-align: right;
-		transition: all .2s;
+		transition: all .2s, color 0s;
 
 		-moz-appearance: textfield;
 
