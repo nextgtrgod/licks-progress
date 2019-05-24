@@ -1,5 +1,8 @@
-
-<div id="settings" class:open>
+<div
+	id="settings"
+	class:open
+	bind:this={ root }
+>
 	<ul>
 		{#each colors as color, i}
 			<li
@@ -25,17 +28,18 @@
 <script>
 	import { onMount } from 'svelte'
 
+	let root
 	let open = false
 
 	let colors = [
 		{
 			bg:	'#1D222C',
-			bar: '#6c3fb5',
+			bar: '#6C3FB5',
 			text: '#FFF',
 		},
 		{
 			bg: '#F7F8F3',
-			bar: '#78f744',
+			bar: '#78F744',
 			text: '#111',
 		},
 	]
@@ -45,6 +49,13 @@
 	onMount(() => {
 
 		set()
+
+		document.addEventListener('click', checkOutsideClick)
+
+		return () => {
+
+			document.removeEventListener('click', checkOutsideClick)
+		}
 	})
 
 	let select = i => {
@@ -60,6 +71,11 @@
 		document.documentElement.style.setProperty('--bg-color', theme.bg)
 		document.documentElement.style.setProperty('--bar-color', theme.bar)
 		document.documentElement.style.setProperty('--text-color', theme.text)
+	}
+
+	let checkOutsideClick = e => {
+
+		if (!root.contains(event.target)) open = false
 	}
 
 </script>

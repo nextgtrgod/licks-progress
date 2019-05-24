@@ -157,9 +157,18 @@
 		transition: background-color .1s;
 		overflow: auto;
 
+		/* opacity: 0; */
+		/* animation: fade-in .4s forwards; */
+
 		-webkit-overflow-scrolling: touch;
 		overscroll-behavior-y: none;
 	}
+
+	/* @keyframes fade-in {
+		to {
+			opacity: 1;
+		}
+	} */
 
 	:global(button) {
 		margin: 0;
